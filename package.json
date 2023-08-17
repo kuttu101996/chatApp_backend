@@ -7,9 +7,6 @@
     "start": "node ./backend/server.js",
     "server": "nodemon ./backend/server.js"
   },
-  "engines": {
-    "node": "16.x"
-  },
   "keywords": [],
   "author": "Snehasish Ghosh Dastidar",
   "license": "ISC",
