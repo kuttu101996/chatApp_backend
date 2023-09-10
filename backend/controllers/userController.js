@@ -76,4 +76,11 @@ const allUser = asyncHandler(async function (req, res) {
   return res.send(users);
 });
 
-module.exports = { registerUser, loginUser, allUser };
+const deleteAccount = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+
+  const deleteAccount = await User.findByIdAndDelete(id);
+  return res.json({ msg: "Successfully deleted", deleteAccount });
+});
+
+module.exports = { registerUser, loginUser, allUser, deleteAccount };
