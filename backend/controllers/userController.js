@@ -23,7 +23,7 @@ const registerUser = asyncHandler(async (req, res) => {
   bcrypt.hash(password, 4, async function (err, hash) {
     if (err) {
       res.status(400);
-      throw new Error({ msg: err.message });
+      throw new Error({ message: err.message });
     }
     const newUser = await User.create({
       name,
@@ -34,7 +34,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     if (newUser) {
       return res.status(201).json({
-        msg: "Successfully Registered",
+        message: "Successfully Registered",
         newUser,
         token: generateToken(newUser._id),
       });
@@ -52,12 +52,12 @@ const loginUser = asyncHandler(async (req, res) => {
 
   if (!userExist) return res
     .status(404)
-    .json({ message: `User not found with this EmailID - ${email}` });
+    .json({ message: `User not found` });
 
   if (userExist && (await userExist.matchPass(password))) {
     userExist.password = "";
     res.status(201).json({
-      msg: "Login Successful",
+      message: "Login Successful",
       userExist,
       token: generateToken(userExist._id),
     });
