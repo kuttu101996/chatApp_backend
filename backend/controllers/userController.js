@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const { generateToken } = require("../config/generateToken");
 const { Chat } = require("../Models/chat.model");
 const { Message } = require("../Models/message.model");
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, pic } = req.body;
@@ -81,24 +81,27 @@ const allUser = asyncHandler(async function (req, res) {
 
 const deleteAccount = asyncHandler(async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.user._id;
 
     // Find the user by their ID
     const user = await User.find({ _id: userId });
 
     if (!user) {
-      return res.status(404).json({ message: `User not found with this ID - ${userId}` });
+      return res
+        .status(404)
+        .json({ message: `User not found with this ID - ${userId}` });
     }
 
     // Find all chats where the user is a participant and isGroupChat is false
+    
     // const chatsToDelete = await Chat.find({
     //   users: userId,
     //   isGroupChat: false,
     // });
 
     const chatsToDelete = await Chat.find({
-      users: { $in: [mongoose.Types.ObjectId(userId)] },
       isGroupChat: false,
+      users: { $elemMatch: { $eq: userId } },
     });
 
     // Loop through the chats and delete associated messages
@@ -112,7 +115,7 @@ const deleteAccount = asyncHandler(async (req, res) => {
     });
 
     // Delete the user
-    await user.remove();
+    await User.findByIdAndDelete(userId);
 
     res.json({
       message: "User and associated chats/messages deleted successfully",

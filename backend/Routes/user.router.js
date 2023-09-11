@@ -25,6 +25,6 @@ userRouter.route("/register").post(registerUser);
 
 userRouter.route("/").get(authentication, allUser);
 
-userRouter.delete("/deleteAccount/:id", deleteAccount);
+userRouter.delete("/deleteAccount", authentication, deleteAccount);
 
 module.exports = { userRouter };
