@@ -14,7 +14,6 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const userExist = await User.findOne({ email });
-
   if (userExist) {
     res.status(400);
     throw new Error("User Exist");
@@ -33,11 +32,37 @@ const registerUser = asyncHandler(async (req, res) => {
     });
 
     if (newUser) {
-      return res.status(201).json({
-        message: "Successfully Registered",
-        newUser,
-        token: generateToken(newUser._id),
-      });
+      const adminEmail = "admin@admin.com";
+      const findAdmin = await User.find({ email: adminEmail });
+      var chatData = {
+        chatName: `Admin - ${newUser.name}`,
+        isGroupChat: false,
+        users: [newUser._id, findAdmin[0]._id],
+      };
+
+      try {
+        const chatCreate = await Chat.create(chatData);
+        var messageData = {
+          sender: findAdmin._id,
+          content: `Hello ${newUser.name}, this is a welcome message from Team - Commu-Cate. We hope you'll enjoy your experience with us.`,
+          chat: chatCreate._id,
+        };
+        var messageCreate = await Message.create(messageData);
+        await Chat.findByIdAndUpdate(chatCreate._id, {
+          latestMessage: messageCreate,
+        });
+        return res.status(201).json({
+          message: "Successfully Registered",
+          newUser,
+          token: generateToken(newUser._id),
+        });
+        // res.status(200).send(fullChat);
+      } catch (error) {
+        res.status(400);
+        throw new Error({
+          msg: "Catch block of creating and getting chat while register a new User",
+        });
+      }
     } else {
       res.status(400);
       throw new Error("Unable to register");
@@ -50,9 +75,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const userExist = await User.findOne({ email });
 
-  if (!userExist) return res
-    .status(404)
-    .json({ message: `User not found` });
+  if (!userExist) return res.status(404).json({ message: `User not found` });
 
   if (userExist && (await userExist.matchPass(password))) {
     userExist.password = "";

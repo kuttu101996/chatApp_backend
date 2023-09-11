@@ -74,6 +74,10 @@ const fetchChats = asyncHandler(async function (req, res) {
   }
 });
 
+const deleteChat = asyncHandler(async (req, res) => {
+  
+});
+
 const createGroupChat = asyncHandler(async function (req, res) {
   if (!req.body.users || !req.body.name) {
     return res.status(400).send({ msg: "please fill all fields" });
@@ -175,4 +179,5 @@ module.exports = {
   renameGroup,
   addToGroup,
   removeFromGroup,
+  deleteChat
 };
