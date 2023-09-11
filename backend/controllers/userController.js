@@ -77,10 +77,47 @@ const allUser = asyncHandler(async function (req, res) {
 });
 
 const deleteAccount = asyncHandler(async (req, res) => {
-  const id = req.params.id;
+  try {
+    const userId = req.params.userId;
 
-  const deleteAccount = await User.findByIdAndDelete(id);
-  return res.json({ msg: "Successfully deleted", deleteAccount });
+    // Find the user by their ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Find all chats where the user is a participant and isGroupChat is false
+    // const chatsToDelete = await Chat.find({
+    //   users: userId,
+    //   isGroupChat: false,
+    // });
+
+    const chatsToDelete = await Chat.find({
+      users: { $in: [mongoose.Types.ObjectId(userId)] },
+      isGroupChat: false,
+    });
+
+    // Loop through the chats and delete associated messages
+    for (const chat of chatsToDelete) {
+      await Message.deleteMany({ chat: chat._id });
+    }
+
+    // Delete the chats
+    await Chat.deleteMany({
+      _id: { $in: chatsToDelete.map((chat) => chat._id) },
+    });
+
+    // Delete the user
+    await user.remove();
+
+    res.json({
+      message: "User and associated chats/messages deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 module.exports = { registerUser, loginUser, allUser, deleteAccount };
