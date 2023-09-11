@@ -78,7 +78,7 @@ const allUser = asyncHandler(async function (req, res) {
 
 const deleteAccount = asyncHandler(async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.params.id;
 
     // Find the user by their ID
     const user = await User.find({ _id: userId });
