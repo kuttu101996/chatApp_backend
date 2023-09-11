@@ -2,6 +2,8 @@ const asyncHandler = require("express-async-handler");
 const { User } = require("../Models/user.model");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../config/generateToken");
+const { Chat } = require("../Models/chat.model");
+const { Message } = require("../Models/message.model");
 
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, pic } = req.body;
@@ -84,7 +86,7 @@ const deleteAccount = asyncHandler(async (req, res) => {
     const user = await User.find({ _id: userId });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found with this ID" });
+      return res.status(404).json({ message: `User not found with this ID - ${userId}` });
     }
 
     // Find all chats where the user is a participant and isGroupChat is false
