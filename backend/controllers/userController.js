@@ -42,15 +42,26 @@ const registerUser = asyncHandler(async (req, res) => {
 
       try {
         const chatCreate = await Chat.create(chatData);
+
         var messageData = {
-          sender: findAdmin._id,
+          sender: findAdmin[0]._id,
           content: `Hello ${newUser.name}, this is a welcome message from Team - Commu-Cate. We hope you'll enjoy your experience with us.`,
           chat: chatCreate._id,
         };
+
         var messageCreate = await Message.create(messageData);
+
+        // messageCreate = await messageCreate.populate("sender", "name pic");
+        // messageCreate = await messageCreate.populate("chat");
+        // messageCreate = await User.populate(messageCreate, {
+        //   path: "chat.users",
+        //   select: "name pic email",
+        // });
+
         await Chat.findByIdAndUpdate(chatCreate._id, {
           latestMessage: messageCreate,
         });
+
         return res.status(201).json({
           message: "Successfully Registered",
           newUser,
