@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const { generateToken } = require("../config/generateToken");
 const { Chat } = require("../Models/chat.model");
 const { Message } = require("../Models/message.model");
+const mongoose = require("mongoose")
 
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, pic } = req.body;

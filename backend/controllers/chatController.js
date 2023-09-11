@@ -29,6 +29,8 @@ const accessChat = asyncHandler(async function (req, res) {
   } else {
     let user1 = await User.find({ _id: userId });
     let user2 = await User.find({ _id: req.user._id });
+    console.log("User1 --- " + user1);
+    console.log("User --- " + user2);
 
     var chatData = {
       chatName: `${user1.name} - ${user2.name}`,
