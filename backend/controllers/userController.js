@@ -50,6 +50,10 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const userExist = await User.findOne({ email });
 
+  if (!userExist) return res
+    .status(404)
+    .json({ message: `User not found with this EmailID - ${email}` });
+
   if (userExist && (await userExist.matchPass(password))) {
     userExist.password = "";
     res.status(201).json({
