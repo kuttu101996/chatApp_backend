@@ -45,21 +45,12 @@ const registerUser = asyncHandler(async (req, res) => {
 
         var messageData = {
           sender: findAdmin[0]._id,
-          content: `This is a auto generated messagae, you don't need to respond to it. 
-          
-          Hello ${newUser.name}, this is a welcome message from Team - Commu-Cate. We hope you'll enjoy your experience with us.`,
+          content: `This is a auto generated messagae, you don't need to respond to it. \n
+          \nHello ${newUser.name}, this is a welcome message from Team - Commu-Cate. We hope you'll enjoy your experience with us.`,
           chat: chatCreate._id,
         };
 
         var messageCreate = await Message.create(messageData);
-
-        // messageCreate = await messageCreate.populate("sender", "name pic");
-        // messageCreate = await messageCreate.populate("chat");
-        // messageCreate = await User.populate(messageCreate, {
-        //   path: "chat.users",
-        //   select: "name pic email",
-        // });
-
         await Chat.findByIdAndUpdate(chatCreate._id, {
           latestMessage: messageCreate,
         });
